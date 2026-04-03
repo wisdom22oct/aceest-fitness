@@ -1,5 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from flask import Flask
+
+app = Flask(__name__)
 
 class ACEestApp:
     def __init__(self, root):
