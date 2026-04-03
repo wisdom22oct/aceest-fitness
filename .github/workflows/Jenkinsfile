@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/wisdom22oct/ACEESTFITNESSGYM.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'docker build -t aceestfitnessgym .'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'pytest --maxfail=1 --disable-warnings -q'
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                script {
+                    // SonarQube integration
+                    def scannerHome = tool 'SonarQubeScanner'
+                    sh "${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=ACEESTFITNESSGYM \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=http://your-sonarqube-server:9000 \
+                        -Dsonar.login=$SONARQUBE_TOKEN"
+                }
+            }
+        }
+    }
+}
